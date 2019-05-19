@@ -23,6 +23,7 @@
     "express-error-handler": "^1.1.0",
     "express-session": "^1.16.1",
     "http": "0.0.0",
+    "mongodb": "^3.2.5",
     "path": "^0.12.7"
   }
 }
