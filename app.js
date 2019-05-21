@@ -51,6 +51,8 @@ var router = express.Router();
 
 app.use("/", router);
 
+var authUser = function(database) {};
+
 var errorHandler = expressErrorHandler({
   ststic: {
     "404": "./public/404.html"
