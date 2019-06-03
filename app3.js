@@ -149,14 +149,12 @@ app.use("/", router);
 var authUser = function(db, id, password, callback) {
   console.log("authuser 호출됨" + id + ", " + password);
 
-  var users = db.collection("users");
-
-  users.find({ id: id, password: password }).toArray(function(err, docs) {
+  UserModel.find({ id: id, password: password }, function(err, docs) {
     if (err) {
+      console.log("authUser에서 에러발생");
       callback(err, null);
       return;
     }
-
     if (docs.length > 0) {
       console.log("일치하는 사용자를 찾음");
       callback(null, docs);
@@ -170,22 +168,16 @@ var authUser = function(db, id, password, callback) {
 var addUser = function(database, id, password, name, callback) {
   console.log("adduser 호출");
 
-  var users = database.collection("users");
-  //계정추가
-  users.insertMany([{ id: id, password: password, name: name }], function(
-    err,
-    result
-  ) {
+  var user = new UserModel({ id: id, password: password, name: name });
+
+  user.save(function(err) {
     if (err) {
+      console.log("데이터 입력중 에러발생");
       callback(err, null);
       return;
     }
-    if (result.insertedCount > 0) {
-      console.log("새로운 사용자 추가됨 : " + result.insertedCount);
-    } else {
-      console.log("추가된 레코드 없음");
-    }
-    callback(null, result);
+    console.log("사용자 데이터 추가함" + id);
+    callback(null, user);
   });
 };
 
