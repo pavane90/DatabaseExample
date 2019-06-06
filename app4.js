@@ -181,7 +181,9 @@ router.route("/process/listuser").post(function(req, res) {
         for (var i = 0; i < results.length; i++) {
           var curId = results[i]._doc.id;
           var curName = results[i]._doc.name;
-          res.write("    <li>#" + i + "->" + curId + ", " + curName + "</li>");
+          res.write(
+            "    <li>#" + (i + 1) + "->" + curId + ", " + curName + "</li>"
+          );
         }
         res.write("</ul></div>");
         res.end();
