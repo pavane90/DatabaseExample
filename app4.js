@@ -28,27 +28,25 @@ function connectDB() {
     console.log("데이터베이스에 연결됨 : " + databaseUrl);
 
     UserSchema = mongoose.Schema({
-      id: {type:String, required:true, unique:true},
-      name: {type:String, index:'hashed'},
-      password: {type:String, required:true},
-      age: {type:Number, 'default':-1},
-      created_at: {type:Date, index:{unique:false}, 'default':Date.now()},
-      updated_at: {type:Date, index:{unique:false}, 'default':Date.now()}
+      id: { type: String, required: true, unique: true },
+      name: { type: String, index: "hashed" },
+      password: { type: String, required: true },
+      age: { type: Number, default: -1 },
+      created_at: { type: Date, index: { unique: false }, default: Date.now() },
+      updated_at: { type: Date, index: { unique: false }, default: Date.now() }
     }); //user 테이블 정의
     console.log("UserSchema 정의함");
-    UserSchema.static('findById', function(id, callback){
-        return this.find({id:id}, callback);
+    UserSchema.static("findById", function(id, callback) {
+      return this.find({ id: id }, callback);
     });
     /*
     UserSchema.statics.findById = function(id, callback) {
         return this.find({id:id}, callback);
     }*/
 
-    UserSchema.static('findAll', function(callback){
-        return this.find({}, callback);
+    UserSchema.static("findAll", function(callback) {
+      return this.find({}, callback);
     });
-
-    
 
     UserModel = mongoose.model("users", UserSchema); //UserSchema와 user를 연결
     console.log("usermodel 정의함");
@@ -161,11 +159,12 @@ router.route("/process/adduser").post(function(req, res) {
   }
 });
 
-router.route('/process/listuser').post(function(req,res){
-  console.log('/process/listuser 라우팅 함수 호출됨');
-
+router.route("/process/listuser").post(function(req, res) {
+  console.log("/process/listuser 라우팅 함수 호출됨");
+  // 사용자 리스트 전체 출력
   if (database) {
-    UserModel.findAll(function(err, results){
+    UserModel.findAll(function(err, results) {
+      //해당 스키마의 내용 전부 가져오기
       if (err) {
         console.log("에러가 발생했습니다" + err);
         res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
@@ -179,7 +178,7 @@ router.route('/process/listuser').post(function(req,res){
         res.write("<h3>사용자 리스트</h3>");
         res.write("<div><ul>");
 
-        for(var i = 0; i <results.length; i++ ) {
+        for (var i = 0; i < results.length; i++) {
           var curId = results[i]._doc.id;
           var curName = results[i]._doc.name;
           res.write("    <li>#" + i + "->" + curId + ", " + curName + "</li>");
@@ -206,25 +205,25 @@ app.use("/", router);
 var authUser = function(db, id, password, callback) {
   console.log("authuser 호출됨" + id + ", " + password);
 
-  UserModel.findById(id, function(err, docs){
-    if (err){
-      callback (err, null);
+  UserModel.findById(id, function(err, docs) {
+    if (err) {
+      callback(err, null);
       return;
     }
-    console.log('id %s로 검색한 결과', id);
-    if (docs.length > 0){
-      if(docs[0]._doc.password == password){
-        console.log('비밀번호 일치함');
+    console.log("id %s로 검색한 결과", id);
+    if (docs.length > 0) {
+      if (docs[0]._doc.password == password) {
+        console.log("비밀번호 일치함");
         callback(null, docs);
       } else {
-        console.log('비밀번호 일치하지 않음');
-        callback(null,null);
+        console.log("비밀번호 일치하지 않음");
+        callback(null, null);
       }
     } else {
-      console.log('일치하는 사용자가 없음');
-      callback(null,null);
+      console.log("일치하는 사용자가 없음");
+      callback(null, null);
     }
-  })
+  });
 
   UserModel.find({ id: id, password: password }, function(err, docs) {
     if (err) {
