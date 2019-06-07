@@ -22,9 +22,11 @@
     "express": "^4.16.4",
     "express-error-handler": "^1.1.0",
     "express-session": "^1.16.1",
+    "fs": "0.0.1-security",
     "http": "0.0.0",
     "mongodb": "^2.2.36",
     "mongoose": "^5.5.12",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "url": "^0.11.0"
   }
 }
