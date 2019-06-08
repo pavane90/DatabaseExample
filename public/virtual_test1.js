@@ -50,3 +50,14 @@ function createUserSchema() {
   UserModel = mongoose.model("users4", UserSchema);
   console.log("UserModel 정의함");
 }
+
+function doTest() {
+  var user = new UserModel({ info: "test01 소녀시대" });
+  user.save(function(err) {
+    if (err) {
+      console.log("에러 발생 " + err);
+      return;
+    }
+    console.log("데이터 추가함");
+  }); // insert
+}
