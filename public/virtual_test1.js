@@ -61,3 +61,5 @@ function doTest() {
     console.log("데이터 추가함");
   }); // insert
 }
+
+connectDB();
