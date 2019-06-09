@@ -31,14 +31,54 @@ function connectDB() {
     console.log("데이터베이스에 연결됨 : " + databaseUrl);
 
     UserSchema = mongoose.Schema({
-      id: { type: String, required: true, unique: true },
-      name: { type: String, index: "hashed" },
-      password: { type: String, required: true },
+      id: { type: String, required: true, unique: true, default: "" },
+      hashed_password: { type: String, required: true, default: "" },
+      salt: { type: String, required: true },
+      name: { type: String, index: "hashed", default: "" },
       age: { type: Number, default: -1 },
       created_at: { type: Date, index: { unique: false }, default: Date.now() },
       updated_at: { type: Date, index: { unique: false }, default: Date.now() }
     }); //user 테이블 정의
     console.log("UserSchema 정의함");
+
+    UserSchema.virtual("password").set(function(password) {
+      this.salt = this.makeSalt();
+      this.hashed_password = this.encryptPassword(password);
+      console.log("virtual password 저장됨");
+    });
+
+    UserSchema.method("encryptPassword", function(plainText, inSalt) {
+      if (inSalt) {
+        return crypto
+          .createHmac("sha1", inSalt)
+          .update(plainText)
+          .digest("hex"); //가상속성으로 받은 패스워드를 암호화
+      } else {
+        return crypto
+          .createHmac("sha1", this.salt)
+          .update(plainText)
+          .digest("hext");
+      }
+    });
+
+    UserSchema.method("makeSalt", function() {
+      return Math.round(new Date().valueOf() * Math.random()) + "";
+    });
+
+    UserSchema.method("authenticate", function(
+      plainText,
+      inSalt,
+      hashed_password
+    ) {
+      if (inSalt) {
+        console.log("authenticate 호출됨");
+        return this.encryptPassword(plainText, inSalt) === hashed_password; //암호 비교
+      } else {
+        console.log("authenticate 호출됨");
+        return this.encryptPassword(plainText) === hashed_password; //암호 비교
+      }
+    });
+
     UserSchema.static("findById", function(id, callback) {
       return this.find({ id: id }, callback);
     });
