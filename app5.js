@@ -59,11 +59,11 @@ function connectDB() {
           .update(plainText)
           .digest("hext");
       }
-    });
+    }); //암호화 실행
 
     UserSchema.method("makeSalt", function() {
       return Math.round(new Date().valueOf() * Math.random()) + "";
-    });
+    }); //Salt 생성
 
     UserSchema.method("authenticate", function(
       plainText,
