@@ -257,7 +257,10 @@ var authUser = function(db, id, password, callback) {
     }
     console.log("id %s로 검색한 결과", id);
     if (docs.length > 0) {
-      if (docs[0]._doc.password == password) {
+      var user = new UserModel({id:id});
+      var authenticated = user.authenticate(password, results[0]._doc.salt, results[0]._doc.hashed_password);
+
+      if (authenticated) {
         console.log("비밀번호 일치함");
         callback(null, docs);
       } else {
