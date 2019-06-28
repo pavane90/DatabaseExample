@@ -41,12 +41,13 @@ function connectDB() {
     }); //user 테이블 정의
     console.log("UserSchema 정의함");
 
+    //virtual password 생성
     UserSchema.virtual("password").set(function(password) {
       this.salt = this.makeSalt();
       this.hashed_password = this.encryptPassword(password);
       console.log("virtual password 저장됨");
     });
-
+    //암호화 처리
     UserSchema.method("encryptPassword", function(plainText, inSalt) {
       if (inSalt) {
         return crypto
