@@ -58,7 +58,7 @@ function connectDB() {
         return crypto
           .createHmac("sha1", this.salt)
           .update(plainText)
-          .digest("hext");
+          .digest("hex");
       }
     }); //암호화 실행
 
@@ -258,8 +258,12 @@ var authUser = function(db, id, password, callback) {
     }
     console.log("id %s로 검색한 결과", id);
     if (docs.length > 0) {
-      var user = new UserModel({id:id});
-      var authenticated = user.authenticate(password, results[0]._doc.salt, results[0]._doc.hashed_password);
+      var user = new UserModel({ id: id });
+      var authenticated = user.authenticate(
+        password,
+        results[0]._doc.salt,
+        results[0]._doc.hashed_password
+      );
 
       if (authenticated) {
         console.log("비밀번호 일치함");
