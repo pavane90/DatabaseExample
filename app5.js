@@ -261,8 +261,8 @@ var authUser = function(db, id, password, callback) {
       var user = new UserModel({ id: id });
       var authenticated = user.authenticate(
         password,
-        results[0]._doc.salt,
-        results[0]._doc.hashed_password
+        docs[0]._doc.salt,
+        docs[0]._doc.hashed_password
       );
 
       if (authenticated) {
@@ -277,7 +277,7 @@ var authUser = function(db, id, password, callback) {
       callback(null, null);
     }
   });
-
+  /*
   UserModel.find({ id: id, password: password }, function(err, docs) {
     if (err) {
       console.log("authUser에서 에러발생");
@@ -292,6 +292,7 @@ var authUser = function(db, id, password, callback) {
       callback(null, null);
     }
   });
+  */
 };
 
 var addUser = function(database, id, password, name, callback) {
