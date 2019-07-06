@@ -10,23 +10,16 @@ var expressSession = require("express-session");
 //에러 핸들러
 var expressErrorHandler = require("express-error-handler");
 
-//mongodb 사용
-var MongoClient = require("mongodb").MongoClient;
-var database;
+var mysql = require("mysql");
 
-function connectDB() {
-  var databaseUrl = "mongodb://localhost:27017/local";
-
-  MongoClient.connect(databaseUrl, function(err, db) {
-    if (err) {
-      console.log("db접속에 실패했습니다.");
-      return; // 종료
-    }
-
-    console.log("데이터베이스에 연결됨" + databaseUrl);
-    database = db;
-  });
-}
+mysql.createPool({
+  connectionLimit: 10,
+  host: "localhost",
+  user: "root",
+  password: "admin",
+  database: "test",
+  debug: false
+});
 
 var app = express(); // express server object
 
