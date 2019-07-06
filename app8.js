@@ -42,6 +42,50 @@ app.use(
 
 var router = express.Router();
 
+router.route("/process/adduser").post(function(req, res) {
+  console.log("/process/adduser 라우팅 함수 호출됨");
+
+  var paramId = req.body.id || req.query.id;
+  var paramPassword = req.body.password || req.query.password;
+  var paramName = req.body.name || req.query.name;
+  var paramAge = req.body.age || req.query.age;
+
+  console.log(
+    "요청 파라미터 : " +
+      paramId +
+      ", " +
+      paramPassword +
+      ", " +
+      paramName +
+      ", " +
+      paramAge
+  );
+
+  addUser(paramId, paramName, paramAge, paramPassword, function(
+    err,
+    addedUser
+  ) {
+    if (err) {
+      console.log("에러가 발생했습니다" + err);
+      res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+      res.write("<h1>에러 발송</h1>");
+      res.end();
+      return;
+    }
+    if (addedUser) {
+      console.dir(addedUser);
+      res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+      res.write("<h1>계정 추가 성공!</h1>");
+      res.end();
+    } else {
+      console.log("사용자 추가실패" + err);
+      res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+      res.write("<h1>사용자 추가실패</h1>");
+      res.end();
+    }
+  });
+});
+
 router.route("/process/login").post(function(req, res) {
   console.log("/process/login 라우팅 함수 호출됨.");
 
@@ -82,6 +126,37 @@ router.route("/process/login").post(function(req, res) {
 
 app.use("/", router);
 
+var addUser = function(id, name, age, password, callback) {
+  console.log("addUser 호출됨");
+
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      if (conn) {
+        conn.release(); //풀로 커넥션 반납함
+      }
+      callback(err, null);
+      return;
+    }
+    console.log("데이터베이스 연결 스레드 아이디 : " + conn.thradId);
+    var data = { id: id, name: name, age: age, password: password };
+    var exec = conn.query("insert into users set ?", data, function(
+      err,
+      result
+    ) {
+      conn.release();
+      console.log("실행된 Sql : " + exec.sql);
+
+      if (err) {
+        console.log("sql실행시 오류발생");
+        callback(err, null);
+        return;
+      }
+
+      callback(null, result);
+    });
+  });
+};
+
 var authUser = function(db, id, password, callback) {
   console.log("authuser 호출됨" + id + ", " + password);
 
@@ -112,5 +187,4 @@ var errorHandler = expressErrorHandler({
 
 var server = http.createServer(app).listen(app.get("port"), function() {
   console.log("express web server started : " + app.get("port"));
-  connectDB();
 }); //익스프레스를 이용해서 웹서버를 작성
