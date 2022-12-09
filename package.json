@@ -17,10 +17,10 @@
   },
   "homepage": "https://github.com/pavane90/DatabaseExample#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "cookie-parser": "^1.4.4",
     "crypto": "^1.0.1",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "express-error-handler": "^1.1.0",
     "express-session": "^1.16.1",
     "fs": "0.0.1-security",
